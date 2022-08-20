@@ -4,11 +4,9 @@ import asyncio
 import json
 import os
 import time
-from typing import Any, Coroutine, Sequence
+from typing import Any, Sequence
 from html import unescape
-from aiohttp import (
-    ClientSession,
-)
+from aiohttp import ClientSession
 
 
 class MeetingTime:
@@ -68,7 +66,6 @@ class SearchResults:
         self.totalCourses: int = x['totalCount']
 
 
-
 def parse(js_txt: str) -> int:
     result = SearchResults(json.loads(js_txt))
 
@@ -89,9 +86,8 @@ def parse(js_txt: str) -> int:
 
     return result.totalCourses
 
-async def send_req(sess: ClientSession, page_offset: int = 0):
-    PAGE_SIZE = 50
-    total_pages = 0
+
+async def send_req(sess: ClientSession, page_offset: int = 0, page_size: int = 50):
     async with sess.get(
         "https://registration.banner.gatech.edu/StudentRegistrationSsb/"
         "ssb/searchResults/searchResults",
@@ -104,7 +100,7 @@ async def send_req(sess: ClientSession, page_offset: int = 0):
             # Parsed from https://registration.banner.gatech.edu/StudentRegistrationSsb/assets/modules/searchResultsView-mf.unminified.js
             'uniqueSessionId': f'abc45{int(time.time()*1000)}',
             'pageOffset': page_offset,
-            'pageMaxSize': PAGE_SIZE,  # Max number of courses each page
+            'pageMaxSize': page_size,  # Max number of courses each page
             'sortColumn': 'subjectDescription',
             'sortDirection': 'asc',
         },
@@ -112,16 +108,14 @@ async def send_req(sess: ClientSession, page_offset: int = 0):
         assert r.status < 400
         total_pages = parse(await r.text())
 
-    if page_offset == 0:
-        reqs: list[Coroutine[Any, Any, None]] = []
-        for new_offset in range(page_offset, total_pages, PAGE_SIZE):
-            reqs.append(send_req(sess, new_offset))
-        await asyncio.gather(*reqs)
+        if page_offset == 0:
+            await send_req(sess, page_offset=page_size, page_size=total_pages - page_offset)
 
 
 async def main():
     headers_dict = {
         'Cookie': os.getenv('GTCOOKIE', ''),
+        # TODO: get this from <meta name="synchronizerToken" content="?????"> in HTML
         'X-Synchronizer-Token': os.getenv('GTTOKEN', ''),
         'Host': 'registration.banner.gatech.edu',
         'Referer': (
