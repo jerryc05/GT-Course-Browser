@@ -37,8 +37,6 @@
 
   /**
    * @param {HTMLDivElement} div
-   * @param {string} subject
-   * @param {string} term
    * @param {string} campus
    * @param {'open'|'close'|'all'} filterOpen
    */
