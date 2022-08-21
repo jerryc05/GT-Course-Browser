@@ -4,7 +4,6 @@
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
 // @version      0.1
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
-// @author       jerryc05
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
 // @grant        none
@@ -17,7 +16,7 @@
 
   const SQUARE_BRACKETED_NAME = '[GT Course Browser]',
     PAGE_SIZE = 50,
-    UNIQ_SESS_ID = `12345${Date.now()}`,
+    UNIQ_SESS_ID = `12345${Date.now()}`, // Parsed from https://registration.banner.gatech.edu/StudentRegistrationSsb/assets/modules/searchResultsView-mf.unminified.js
     DOM_ID = 'gt_course_browser',
     MAX_SUBJECTS = 90
   let subject = ''
@@ -52,7 +51,7 @@
               `&txt_campus=${campus}` +
               `&txt_term=${term}` +
               '&startDatepicker=&endDatepicker=' +
-              `&uniqueSessionId=${UNIQ_SESS_ID}` + // Parsed from https://registration.banner.gatech.edu/StudentRegistrationSsb/assets/modules/searchResultsView-mf.unminified.js
+              `&uniqueSessionId=${UNIQ_SESS_ID}` +
               `&pageOffset=${offset}` +
               `&pageMaxSize=${PAGE_SIZE}` +
               '&sortColumn=subjectDescription&sortDirection=asc', {
