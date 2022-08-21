@@ -230,8 +230,9 @@
 
   const css = document.createElement('style')
   css.textContent = `
-  #${DOM_ID} button:not([disabled]) {
-    background-color: #4CAF50;
-  }`
+  #${DOM_ID}>div:first-child{height:2rem}
+  #${DOM_ID}>div:first-child *{height:inherit}
+  #${DOM_ID} button:not([disabled]){background-color:#4CAF50;}
+  `
   document.head.append(css)
 })()
