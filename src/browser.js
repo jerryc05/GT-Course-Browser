@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.1
+// @version      0.2
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -39,7 +39,7 @@
    * @param {string} campus
    * @param {'open'|'close'|'all'} filterOpen
    */
-  async function doSearch(div, campus = 'A', filterOpen = 'open') {
+  async function doSearch(div, campus, filterOpen) {
     const syncToken = String(document.querySelector('meta[name="synchronizerToken"]').getAttribute('content'))
     console.log(`${SQUARE_BRACKETED_NAME} synchronizerToken: ${syncToken}`)
 
