@@ -174,7 +174,7 @@
               `&offset=1&max=${MAX_SUBJECTS}` +
               `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
       subjectSelect.innerHTML = ''
-      subjectSelect.append(nullOption.cloneNode(true))
+      subjectSelect.append(getNullOption())
       for (const s of subjects) {
         const opt = document.createElement('option')
         opt.value = s.code
