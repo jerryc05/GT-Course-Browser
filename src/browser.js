@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.6
+// @version      0.7
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
