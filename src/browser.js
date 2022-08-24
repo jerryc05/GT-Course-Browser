@@ -3,7 +3,7 @@
 // @author       jerryc05
 // @namespace    https://github.com/jerryc05
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.12
+// @version      0.13
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -156,12 +156,14 @@
     const terms = await (await fetch('https://registration.banner.gatech.edu/StudentRegistrationSsb/ssb/classRegistration/getTerms?searchTerm=&offset=1&max=10', { headers: {
       'X-Synchronizer-Token': SYNC_TOKEN
     }})).json()
+    const f = document.createDocumentFragment()
     for (const t of terms) {
       const opt = document.createElement('option')
       opt.value = t.code
       opt.innerText = t.description
-      termSelect.append(opt)
+      f.append(opt)
     }
+    termSelect.append(f)
   }, {once: true})
   termSelect.onchange = async x => {
     term = x.target.value
@@ -173,13 +175,15 @@
       // eslint-disable-next-line max-len
       subjects = await (await fetch(`https://registration.banner.gatech.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?searchTerm=&term=${term}&offset=1&max=${MAX_SUBJECTS}&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
       while (subjectSelect.lastChild !== null) subjectSelect.removeChild(subjectSelect.lastChild)
-      subjectSelect.append(getNullOption())
+      const f = document.createDocumentFragment()
+      f.append(getNullOption())
       for (const s of subjects) {
         const opt = document.createElement('option')
         opt.value = s.code
         opt.innerText = unescapeHTML(s.description)
-        subjectSelect.append(opt)
+        f.append(opt)
       }
+      subjectSelect.append(f)
       termSelect.disabled = false
     }
   }
