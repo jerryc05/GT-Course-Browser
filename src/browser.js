@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.8
+// @version      0.9
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -109,7 +109,7 @@
     const pre = document.createElement('pre')
     for (const c of data) {
       if ((filterOpen === 'open' && !c.openSection) || (filterOpen === 'close' && c.openSection)) continue
-      pre.innerHTML += `${c.courseReferenceNumber} |` +
+      pre.textContent += `${c.courseReferenceNumber} |` +
               ` ${c.subjectCourse.padEnd(7)} - ${c.sequenceNumber.padEnd(3)} |` +
               ` ${c.openSection ? 'OPEN ' : 'CLOSE'} |` +
               ` ${c.creditHours === null ? `${c.creditHourLow}+` : String(c.creditHours).padStart(2)} cr |` +
