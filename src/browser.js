@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.2
+// @version      0.3
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -134,9 +134,12 @@
   document.getElementById('content').append(div)
 
 
-  const nullOption = document.createElement('option')
-  nullOption.innerText = '=== Select below ==='
-  nullOption.selected = true
+  function getNullOption() {
+    const x = document.createElement('option')
+    x.innerText = '=== Select below ==='
+    x.selected = true
+    return x
+  }
 
 
   const btn = document.createElement('button')
@@ -147,11 +150,10 @@
   const termSelect = document.createElement('select')
 
 
-  subjectSelect.append(nullOption.cloneNode(true))
+  subjectSelect.append(getNullOption())
   subjectSelect.onchange = x => {
     subject = x.target.value
     const isTermSelected = termSelect.value !== ''
-
     btn.disabled = subject === '' || !isTermSelected
   }
 
@@ -159,24 +161,18 @@
   const fall2022Option = document.createElement('option')
   fall2022Option.value = '202208'
   fall2022Option.innerText = '202208'
-  termSelect.append(nullOption.cloneNode(true), fall2022Option)
+  termSelect.append(getNullOption(), fall2022Option)
   termSelect.onchange = async x => {
     term = x.target.value
     const isSubjectSelected = subjectSelect.value !== ''
-
     btn.disabled = term === '' || !isSubjectSelected
-
-
     if (term !== '') {
-      btn.disabled = isSubjectSelected
-
       subjects = await (await fetch('https://registration.banner.gatech.edu/' +
               'StudentRegistrationSsb/ssb/classSearch/get_subject' +
               '?searchTerm=' +
               `&term=${term}` +
               `&offset=1&max=${MAX_SUBJECTS}` +
               `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
-
       subjectSelect.innerHTML = ''
       subjectSelect.append(nullOption.cloneNode(true))
       for (const s of subjects) {
