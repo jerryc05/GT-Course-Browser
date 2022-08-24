@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.7
+// @version      0.8
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -106,24 +106,18 @@
 
 
 
-    const frag = document.createDocumentFragment()
+    const pre = document.createElement('pre')
     for (const c of data) {
       if ((filterOpen === 'open' && !c.openSection) || (filterOpen === 'close' && c.openSection)) continue
-      const pre = document.createElement('pre')
-      pre.style.display = 'block'
-      pre.style.margin = '0'
-      pre.style.border = '0'
-      pre.style.padding = '0'
-      pre.innerText = `${c.courseReferenceNumber} |` +
+      pre.innerHTML += `${c.courseReferenceNumber} |` +
               ` ${c.subjectCourse.padEnd(7)} - ${c.sequenceNumber.padEnd(3)} |` +
               ` ${c.openSection ? 'OPEN ' : 'CLOSE'} |` +
               ` ${c.creditHours === null ? `${c.creditHourLow}+` : String(c.creditHours).padStart(2)} cr |` +
               ` ${unescapeHTML(c.courseTitle).padEnd(25)} |` +
               ` Seat: ${String(c.enrollment).padEnd(3)}/${String(c.maximumEnrollment).padEnd(3)} |` +
-              ` WL: ${String(c.waitCount).padEnd(3)}/${String(c.waitCapacity).padEnd(3)}`
-      frag.append(pre)
+              ` WL: ${String(c.waitCount).padEnd(3)}/${String(c.waitCapacity).padEnd(3)}\n`
     }
-    div.append(frag)
+    div.append(pre)
   }
 
 
