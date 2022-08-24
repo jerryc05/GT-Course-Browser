@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.9
+// @version      0.10
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -18,7 +18,8 @@
     PAGE_SIZE = 50,
     UNIQ_SESS_ID = `12345${Date.now()}`, // Parsed from https://registration.banner.gatech.edu/StudentRegistrationSsb/assets/modules/searchResultsView-mf.unminified.js
     DOM_ID = 'gt_course_browser',
-    MAX_SUBJECTS = 90
+    MAX_SUBJECTS = 90,
+    SYNC_TOKEN = String(document.querySelector('meta[name="synchronizerToken"]').getAttribute('content'))
   let subject = ''
   let term = ''
 
@@ -40,10 +41,6 @@
    * @param {'open'|'close'|'all'} filterOpen
    */
   async function doSearch(div, campus, filterOpen) {
-    const syncToken = String(document.querySelector('meta[name="synchronizerToken"]').getAttribute('content'))
-    console.log(`${SQUARE_BRACKETED_NAME} synchronizerToken: ${syncToken}`)
-
-
     async function f(offset = 0) {
       const x = await fetch('https://registration.banner.gatech.edu/' +
               'StudentRegistrationSsb/ssb/searchResults/searchResults' +
@@ -55,9 +52,9 @@
               `&pageOffset=${offset}` +
               `&pageMaxSize=${PAGE_SIZE}` +
               '&sortColumn=subjectDescription&sortDirection=asc', {
-        headers: new Headers({
-          'X-Synchronizer-Token': syncToken
-        })
+        headers: {
+          'X-Synchronizer-Token': SYNC_TOKEN
+        }
       })
       return x.json()
     }
@@ -152,10 +149,19 @@
   }
 
 
-  const fall2022Option = document.createElement('option')
-  fall2022Option.value = '202208'
-  fall2022Option.innerText = '202208'
-  termSelect.append(getNullOption(), fall2022Option)
+  termSelect.append(getNullOption())
+  termSelect.addEventListener('click', async() => {
+    // eslint-disable-next-line max-len
+    const terms = await (await fetch('https://registration.banner.gatech.edu/StudentRegistrationSsb/ssb/classRegistration/getTerms?searchTerm=&offset=1&max=10', { headers: {
+      'X-Synchronizer-Token': SYNC_TOKEN
+    }})).json()
+    for (const t of terms) {
+      const opt = document.createElement('option')
+      opt.value = t.code
+      opt.innerText = t.description
+      termSelect.append(opt)
+    }
+  }, {once: true})
   termSelect.onchange = async x => {
     term = x.target.value
     const isSubjectSelected = subjectSelect.value !== ''
@@ -163,12 +169,8 @@
     if (term !== '') {
       // "mutex" lock
       termSelect.disabled = true
-      subjects = await (await fetch('https://registration.banner.gatech.edu/' +
-              'StudentRegistrationSsb/ssb/classSearch/get_subject' +
-              '?searchTerm=' +
-              `&term=${term}` +
-              `&offset=1&max=${MAX_SUBJECTS}` +
-              `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
+      // eslint-disable-next-line max-len
+      subjects = await (await fetch(`https://registration.banner.gatech.edu/StudentRegistrationSsb/ssb/classSearch/get_subject?searchTerm=&term=${term}&offset=1&max=${MAX_SUBJECTS}&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
       while (subjectSelect.lastChild !== null) subjectSelect.removeChild(subjectSelect.lastChild)
       subjectSelect.append(getNullOption())
       for (const s of subjects) {
