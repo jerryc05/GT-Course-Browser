@@ -2,7 +2,7 @@
 // @name         GT Course Browser
 // @namespace    https://github.com/jerryc05/GT-Course-Browser
 // @supportURL   https://github.com/jerryc05/GT-Course-Browser
-// @version      0.4
+// @version      0.6
 // @description  GaTech Course Browser parsed from registration.banner.gatech.edu
 // @match        https://registration.banner.gatech.edu/BannerExtensibility/customPage/page/HOMEPAGE_Registration
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=gatech.edu
@@ -167,13 +167,15 @@
     const isSubjectSelected = subjectSelect.value !== ''
     btn.disabled = term === '' || !isSubjectSelected
     if (term !== '') {
+      // "mutex" lock
+      termSelect.disabled = true
       subjects = await (await fetch('https://registration.banner.gatech.edu/' +
               'StudentRegistrationSsb/ssb/classSearch/get_subject' +
               '?searchTerm=' +
               `&term=${term}` +
               `&offset=1&max=${MAX_SUBJECTS}` +
-              `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
-      subjectSelect.innerHTML = ''
+        `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
+      while (subjectSelect.lastChild !== null) subjectSelect.removeChild(subjectSelect.lastChild)
       subjectSelect.append(getNullOption())
       for (const s of subjects) {
         const opt = document.createElement('option')
@@ -181,6 +183,7 @@
         opt.innerText = unescapeHTML(s.description)
         subjectSelect.append(opt)
       }
+      termSelect.disabled = false
     }
   }
 
