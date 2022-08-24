@@ -174,7 +174,7 @@
               '?searchTerm=' +
               `&term=${term}` +
               `&offset=1&max=${MAX_SUBJECTS}` +
-        `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
+              `&uniqueSessionId=${UNIQ_SESS_ID}`)).json()
       while (subjectSelect.lastChild !== null) subjectSelect.removeChild(subjectSelect.lastChild)
       subjectSelect.append(getNullOption())
       for (const s of subjects) {
